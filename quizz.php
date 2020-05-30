@@ -1,6 +1,11 @@
 <?php
 include("./ressources/config.php");
 
+$id="";
+if( ! isset($_GET["id"]) || $_GET["id"] == "")
+    die("Problème de connexion, veuillez contacter l'organisateur au 06 21 45 87 41");
+else
+    $id = $_GET["id"];
 $pdo = new PDO("mysql:host=" . $BDD_host . ";dbname=" . $BDD_base, $BDD_user, $BDD_password);
 
 $sth = $pdo->query("SELECT * FROM questions where id=$idQuestion");
@@ -8,8 +13,7 @@ $question = $sth->fetchAll(PDO::FETCH_ASSOC)[0];
 $sth = $pdo->query("SELECT * FROM propositions WHERE idQuestion=$idQuestion");
 $answers = $sth->fetchAll(PDO::FETCH_ASSOC);
 exec("./ressources/selectionner_reponse.exe > /dev/null &");
-//shell_exec("./ressources/selectionner_reponse.exe >out.txt");
-//`echo "./ressources/selectionner_reponse.exe"  |at now`
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -75,7 +79,8 @@ exec("./ressources/selectionner_reponse.exe > /dev/null &");
                     </div>
                 </div>
                 <div class="modal-footer text-muted">
-                    <form action="resultat.php">
+                    <form action="resultat.php" method="post">
+                        <?php echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />" ?>
                         <input type="submit" class=" btn btn-primary" value="Envoyer" />
                     </form>
                 </div>

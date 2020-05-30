@@ -1,6 +1,11 @@
 <?php
 include("./ressources/config.php");
 
+$id="";
+if( ! isset($_POST["id"]) || $_POST["id"] == "")
+    die("Problème de connexion, veuillez contacter l'organisateur au 06 21 45 87 41");
+else
+    $id = $_POST["id"];
 $pdo = new PDO("mysql:host=" . $BDD_host . ";dbname=" . $BDD_base, $BDD_user, $BDD_password);
 $reponse = "";
 exec("cat ./pid",$pidCat);
@@ -15,6 +20,9 @@ $reponse = $reponseCat[0];
 $couleur = $LED_ENUM[(int)$reponse];
 $sth = $pdo->query("SELECT * FROM propositions where idQuestion=$idQuestion and couleur='$couleur'");
 $reponseDetail= $sth->fetchAll(PDO::FETCH_ASSOC)[0];
+$idProposition = $reponseDetail["id"];
+$stmt = $pdo->prepare("INSERT INTO reponses(idProposition,identifiantUser) VALUES(?,?)");
+$stmt->execute([$idProposition, $id]);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
